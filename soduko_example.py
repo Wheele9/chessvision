@@ -11,13 +11,14 @@ def intersectionS(line1,line2):
 
     det=np.cos(t1)*np.sin(t2)-np.sin(t1)*np.cos(t2)
     print("determinant: ",det)
-
-    if det!=0:
+    if det==0:
+        return False
+    else:
         x=int((np.sin(t2)*r1-np.sin(t1)*r2)/det)
         y=-int((np.cos(t2)*r1-np.cos(t1)*r2)/det)  #image coords...
         print(x,y)
-    cv2.circle(lineimg,(x,y), 3, (255,0,0), -1)
-    return (x,y)
+        cv2.circle(lineimg,(x,y), 4, (255,0,0), -1)
+        return (x,y)
 
 filename = 'images2.jpg'
 orig = cv2.imread(filename)
@@ -99,21 +100,12 @@ cv2.imshow('after_treshold',th2)
 cv2.imshow('after_line_search',lineimg)
 
 combies=list(itertools.combinations(lines,2))
-print(10,combies)
-print(11,combies[2],12)
 
+for i in combies:
+    print (200,i)
+    print (i[0][0], i[1][0])
+    intersectionS(i[0][0], i[1][0])
 
-for x in range(len(combies)):
-    pass
-    print (x, combies[x])
-    print (22,lines[0])
-    #intersectionS(combies[x][0], combies[x][1])
-
-
-
-
-intersectionS(lines[0][0], lines[12][0])
-#cv2.circle(lineimg,(186,202), 3, (255,0,0), -1)
 
 cv2.imshow('after_intersect_search',lineimg)
 
