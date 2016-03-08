@@ -5,17 +5,38 @@ matyas-czeman
 """
 import numpy as np
 import cv2
-def absol2D(x,y):
-    return x*x+y*y
 
-cap = cv2.VideoCapture(0)
 
-ll=[[5,3],[32,5],[-53,1],[53,5]]
-for i in ll:
-    absol=np.absolute(i)
-    #print (i)
-    print (absol)
 
-print (np.absolute([5,7]))
+from operator import itemgetter
+L=[[0, 1, 'f'], [4, 2, 't'], [9, 4, 'afsd']]
+xx=sorted(L, key=itemgetter(1))
 
-print (absoliiii(5,7))
+
+print(xx)
+
+
+a = [ [1,2], [2,9], [20,7] ]
+na = np.array(a)
+print (na[:,1])
+
+
+for elem in a:
+    print (elem[:1])
+    #if elem[:1] < 10: 
+      #  elem[:1]=elem[:1]+23
+
+moda=[z[0]+180 for z in a if z[0] < 2  ]
+
+#print (moda)
+
+print (a)
+
+for i in range(len(a)):
+    print (i)
+    if (a[i][0]) < 20: a[i][0]=a[i][0]+30
+
+
+print (a)
+
+

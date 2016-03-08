@@ -32,6 +32,17 @@ def intersectionS(line1,line2):
             # intersecton out of image
             return False
 
+
+#def dist_of_2_points(x1,y1,x2,y2):
+#    return (x2-x1)**2+(y2-y1)**2
+
+def dist_of_2_points(p1,p2):
+    x1=p1[0]
+    y1=p1[1]
+    x2=p2[0]
+    y2=p2[1]
+    return (x2-x1)**2+(y2-y1)**2
+
 iter1=0
 filename = 'images2.jpg'
 orig = cv2.imread(filename)
@@ -112,15 +123,40 @@ for i in points:
         br_corner=[i[0], i[1] ]
         br_dist= (absol2D(i[0], i[1]))
 
+points.remove(br_corner)
+points.remove(tl_corner)
 ## DRAW agreen circle at the corners
 cv2.circle(lineimg,(tl_corner[0],tl_corner[1]), 10, (0,255,0), -1)
 cv2.circle(lineimg,(br_corner[0],br_corner[1]), 10, (0,255,0), -1)
-
-
-
 print ("top left corner ",tl_corner)
 print ("bottom right corner ",br_corner)
-#print (iter1)
+
+
+### FIND THE OTHER 2 CORNERS: DISTANCE FROM CORNERS ARE THE BIGGEST
+bl_corner=points[0]
+
+
+dist_sum_bl=0
+for i in points:
+    if dist_of_2_points(tl_corner,i)+dist_of_2_points(br_corner,i) > dist_sum_bl:
+        dist_sum_bl=dist_of_2_points(tl_corner,i)+dist_of_2_points(br_corner,i)
+        bl_corner=[i[0], i[1] ]
+
+points.remove(bl_corner)
+cv2.circle(lineimg,(bl_corner[0],bl_corner[1]), 10, (0,255,0), -1)
+print ("bottom left corner ",bl_corner)
+
+tr_corner=points[0]
+diagonaldist=0
+
+for i in points:
+    if dist_of_2_points(bl_corner,i)+dist_of_2_points(br_corner,i)>diagonaldist:
+        diagonaldist= dist_of_2_points(bl_corner,i)+dist_of_2_points(br_corner,i)
+        tr_corner=[i[0], i[1] ]
+
+cv2.circle(lineimg,(tr_corner[0],tr_corner[1]), 10, (255,255,0), -1)
+print ("top right corner ",tr_corner)
+
 cv2.imshow('after_intersect_search',lineimg)
 
 if cv2.waitKey(0) & 0xff == 27:
