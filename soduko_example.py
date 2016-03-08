@@ -3,6 +3,10 @@ import numpy as np
 import itertools
 
 
+def absol2D(x,y):
+
+    return x*x+y*y
+
 def intersectionS(line1,line2):
 
     r1=line1[0]
@@ -11,17 +15,19 @@ def intersectionS(line1,line2):
     t2=line2[1]
 
     det=np.cos(t1)*np.sin(t2)-np.sin(t1)*np.cos(t2)
-    print("determinant: ",det)
+    #print("determinant: ",det)
     if det==0:
         # line are paralel
         return False
     else:
-        x=int((np.sin(t2)*r1-np.sin(t1)*r2)/det)
-        y=-int((np.cos(t2)*r1-np.cos(t1)*r2)/det)  #image coords...
-        if x>0 and x< width and y>0 and y< height:
-            print(x,y)
-            cv2.circle(lineimg,(x,y), 4, (255,0,0), -1)
-            return (x,y)
+        global px
+        global py
+        px=int((np.sin(t2)*r1-np.sin(t1)*r2)/det)
+        py=-int((np.cos(t2)*r1-np.cos(t1)*r2)/det)  #image coords...
+        if px>0 and px< width and py>0 and py< height:
+            #print(px,py)
+            cv2.circle(lineimg,(px,py), 4, (255,0,0), -1)
+            return True
         else: 
             # intersecton out of image
             return False
@@ -29,9 +35,9 @@ def intersectionS(line1,line2):
 iter1=0
 filename = 'images2.jpg'
 orig = cv2.imread(filename)
-shape=orig.shape
-height, width, _ = orig.shape
-print(shape) # height,width,colors
+
+height, width, _ = orig.shape # height,width,colors
+
 cv2.imshow('original',orig)
 img = cv2.imread(filename)
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -72,15 +78,49 @@ cv2.imshow('after_treshold',th2)
 cv2.imshow('after_line_search',lineimg)
 
 combies=list(itertools.combinations(lines,2))
+# combination of all the lines to pairs
+# something better algorithm??
+px=0
+py=0
+# initial coordinats of crosses
 
+points=[]
 for i in combies:
 
     #print (i[0][0], i[1][0])
     if intersectionS(i[0][0], i[1][0]):
-        pass
-        iter1=iter1+1
 
-print (iter1)
+        points.append([px,py])
+        
+        iter1=iter1+1
+        #points
+###SEARCHING THE  4 CORNERS
+#print (points)
+tl_corner=points[0]
+br_corner=points[0]
+tl_dist=absol2D(tl_corner[0], tl_corner[1])
+br_dist=tl_dist
+
+for i in points:
+    #print (i, absol2D(i[0], i[1]))
+    if absol2D(i[0], i[1]) < tl_dist:
+        print ("closer to tl corner")
+        tl_corner=[i[0], i[1] ]
+        tl_dist= (absol2D(i[0], i[1]))
+    elif absol2D(i[0], i[1]) > br_dist:
+        print ("closer to br corner")
+        br_corner=[i[0], i[1] ]
+        br_dist= (absol2D(i[0], i[1]))
+
+## DRAW agreen circle at the corners
+cv2.circle(lineimg,(tl_corner[0],tl_corner[1]), 10, (0,255,0), -1)
+cv2.circle(lineimg,(br_corner[0],br_corner[1]), 10, (0,255,0), -1)
+
+
+
+print ("top left corner ",tl_corner)
+print ("bottom right corner ",br_corner)
+#print (iter1)
 cv2.imshow('after_intersect_search',lineimg)
 
 if cv2.waitKey(0) & 0xff == 27:
