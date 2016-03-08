@@ -145,6 +145,12 @@ for i in range(len(pack2)):
 print (222, pack2)
 plt.plot(pack2)
 sorted_pack2=sorted(pack2, key=itemgetter(1))
+for i in range(len(pack2)):
+
+    if pack2[i][1]>np.pi : pack2[i][1]=pack2[i][1]-np.pi
+###TODO
+###subtract pi back to drawing
+
 
 #uc_x,uc_y=[np.cos(x[1]), np.sin(x[1]) for x in pack2]
 
@@ -157,7 +163,7 @@ uc_y=np.sin((np_pack2[:,1]))
 
 # plt.plot(uc_x, uc_y)
 # plt.plot(uc_y)
-plt.show()
+#plt.show()
 
 
 
