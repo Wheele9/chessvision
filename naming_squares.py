@@ -4,6 +4,9 @@ import itertools
 from matplotlib import pyplot as plt
 from operator import itemgetter
 
+def centre_of_4_points(p1,p2,p3,p4):
+    return int((p1[0]+p2[0]+p3[0]+p4[0])/4), int((p1[1]+p2[1]+p3[1]+p4[1])/4)
+
 
 def absol2D(x,y):
 
@@ -29,6 +32,10 @@ def intersectionS(line1,line2):
         if px>0 and px< width and py>0 and py< height:
             #print(px,py)
             cv2.circle(lineimg,(px,py), 4, (255,0,0), -1)
+            #cv2.imshow('after_intersect_search',lineimg)
+
+            if cv2.waitKey(0) & 0xff == 27:
+                cv2.destroyAllWindows()
             return True
         else: 
             # intersecton out of image
@@ -68,25 +75,6 @@ lineimg=orig
 edges = cv2.Canny(blurred,50,150,apertureSize = 3)
 
 lines = cv2.HoughLines(edges,1.5,np.pi/90,100)
-#print (lines)
-for x in range(len(lines)):
-    for rho, theta in lines[x]:
-
-        a = np.cos(theta)
-        b = np.sin(theta)
-        x0 = a*rho
-        y0 = b*rho
-        x1 = int(x0 + 1000*(-b))
-        y1 = int(y0 + 1000*(a))
-        x2 = int(x0 - 1000*(-b))
-        y2 = int(y0 - 1000*(a))
-
-    #cv2.line(lineimg,(x1,y1),(x2,y2),(0,0,255),2)
-
-
-
-
-###separating lines with Kmeans
 
 clean_lines=[i[0] for i in lines]
 
@@ -123,8 +111,7 @@ elif len(pack3)==9:
 
 ####sort the sparated lines, based on rho
 sorted_lines=[pack1, pack2]
-print(22,sorted_lines)
-print (23, sorted_lines[1])
+
 sorted_pack1=sorted(pack1, key=itemgetter(0))
 
 for i in range(len(pack2)):
@@ -136,10 +123,11 @@ for i in range(len(pack2)):
     if pack2[i][1]>np.pi : pack2[i][1]=pack2[i][1]-np.pi
 
 for x in range(len(sorted_pack1)):
-    print (111,x, sorted_pack1[x])
+
+
     theta=sorted_pack1[x][1]
     rho=sorted_pack1[x][0]
-    print (rho,theta)
+
     a = np.cos(theta)
     b = np.sin(theta)
     x0 = a*rho
@@ -153,11 +141,11 @@ for x in range(len(sorted_pack1)):
 
 
 for x in range(len(sorted_pack2)):
-    print (111,x, sorted_pack2[x])
+
     theta=sorted_pack2[x][1]
     if theta>np.pi: theta=theta-np.pi
     rho=sorted_pack2[x][0]
-    print (rho,theta)
+
     a = np.cos(theta)
     b = np.sin(theta)
     x0 = a*rho
@@ -178,12 +166,29 @@ py=0
 # initial coordinats of crosses
 
 points=[]
-for i in combies:
+### combination of vertical and horizontal lines: 
 
-    #print (i[0][0], i[1][0])
-    if intersectionS(i[0][0], i[1][0]):
+combinationS = list(itertools.product(sorted_pack1,sorted_pack2))
 
-        points.append([px,py])
+for i in combinationS:
+    #print (i[0])
+    intersectionS(i[0], i[1])
+    points.append([px,py])
+print (len(combinationS))
+print (points)
+font = cv2.FONT_HERSHEY_SIMPLEX
+cv2.putText(lineimg,'OpenCV',(10,100), font, 3,(255,100,255),2,cv2.LINE_AA)
+
+letters=['a','b','c','d','e','f','g','h']
+numbers=['1','2','3','4','5','6','7','8']
+
+for i in range(1,72):
+    if i%9!=0:
+        m_i=i-int(i/9)
+        coa=centre_of_4_points(points[i-1],points[i],points[i+8],points[i+9])
+        cv2.circle(lineimg,(points[m_i-1][0],points[m_i-1][1]), 4, (255,0,0), -1)
+        cv2.putText(lineimg,str(m_i),(coa[0],coa[1]), font, 0.61,(60,230,90),2,cv2.LINE_AA)
+
 
 
 cv2.imshow('after_intersect_search',lineimg)
