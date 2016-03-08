@@ -181,14 +181,16 @@ cv2.putText(lineimg,'OpenCV',(10,100), font, 3,(255,100,255),2,cv2.LINE_AA)
 
 letters=['a','b','c','d','e','f','g','h']
 numbers=['1','2','3','4','5','6','7','8']
+square_names=list(itertools.product(letters,numbers))
 
-for i in range(1,72):
-    if i%9!=0:
+#print (square_names)
+for i in range(0,72):
+    if (i-8)%9!=0 :
         m_i=i-int(i/9)
-        coa=centre_of_4_points(points[i-1],points[i],points[i+8],points[i+9])
-        cv2.circle(lineimg,(points[m_i-1][0],points[m_i-1][1]), 4, (255,0,0), -1)
-        cv2.putText(lineimg,str(m_i),(coa[0],coa[1]), font, 0.61,(60,230,90),2,cv2.LINE_AA)
+        coa=centre_of_4_points(points[i],points[i+1],points[i+9],points[i+10])
 
+        cv2.putText(lineimg,str(square_names[m_i][0]+square_names[m_i][1]),(coa[0],coa[1]), font, 0.61,(60,230,90),2,cv2.LINE_AA)
+        print (i,m_i, str(square_names[m_i][0]+square_names[m_i][1]))
 
 
 cv2.imshow('after_intersect_search',lineimg)

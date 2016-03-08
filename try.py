@@ -37,6 +37,6 @@ for i in range(len(a)):
     if (a[i][0]) < 20: a[i][0]=a[i][0]+30
 
 
-print (a)
+print (str('a'+'b'))
 
 
