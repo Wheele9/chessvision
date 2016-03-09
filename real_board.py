@@ -68,20 +68,21 @@ def rectify(h):
 
 iter1=0
 filename = 'green_board_5.jpg'
+img=cv2.imread(filename)
 orig = cv2.imread(filename)
 gray = cv2.cvtColor(orig,cv2.COLOR_BGR2GRAY)
+print (gray.shape)
 gray = cv2.GaussianBlur(gray,(5,5),0)
-thresh = cv2.adaptiveThreshold(gray,255,1,1,11,2)
+threshold = cv2.adaptiveThreshold(gray,255,1,1,11,2)
 
+#cv2.imshow('threshold',threshold)
 
-cv2.imshow('thresh',thresh)
-
-im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+im2, contours, hierarchy = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 biggest = None
 max_area = 0
 bigest=0
 
-min_size = thresh.size/4
+min_size = threshold.size/4
 for i in contours:
         area = cv2.contourArea(i)
         if area > 100:
@@ -99,15 +100,28 @@ _4_corners=rectify(biggest)
 
 
 ###drawing the board border
-cv2.drawContours(orig, [m_c], 0, (0,0,255), 4)
-board=cv2.fillPoly(orig, pts =[m_c], color=(255,255,255))
-cv2.imshow('board',orig)
+#cv2.drawContours(orig, [m_c], 0, (0,0,255), 4)
 
 
-###crating binary iamge from border
+
+###crating binary image from border
 mask = np.ones(orig.shape,np.uint8)
-board=cv2.fillPoly(mask, pts =[m_c], color=(255,255,255))
-cv2.imshow('mask',mask)
+cv2.fillPoly(mask, pts =[m_c], color=(255,255,255))
+mask_inv = cv2.bitwise_not(mask)
+#cv2.imshow('mask',mask)
+
+
+###masked out original picture:
+masked_orig=cv2.bitwise_or(img,mask_inv)
+cv2.imshow('masked_board',masked_orig)
+
+
+###masked out threshold picture:
+###3channel to 1 channel
+mask_inv=cv2.cvtColor(mask_inv,cv2.COLOR_BGR2GRAY)
+masked_th=cv2.bitwise_or(threshold,mask_inv)
+cv2.imshow('masked_treshold',masked_th)
+
 
 if cv2.waitKey(0) & 0xff == 27:
     cv2.destroyAllWindows()
