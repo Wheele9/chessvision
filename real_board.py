@@ -51,6 +51,21 @@ def dist_of_2_points(p1,p2):
     y2=p2[1]
     return (x2-x1)**2+(y2-y1)**2
 
+def rectify(h):
+        h = h.reshape((4,2))
+        hnew = np.zeros((4,2),dtype = np.float32)
+ 
+        add = h.sum(1)
+        hnew[0] = h[np.argmin(add)]
+        hnew[2] = h[np.argmax(add)]
+         
+        diff = np.diff(h,axis = 1)
+        hnew[1] = h[np.argmin(diff)]
+        hnew[3] = h[np.argmax(diff)]
+  
+        return hnew
+
+
 iter1=0
 filename = 'green_board_5.jpg'
 orig = cv2.imread(filename)
@@ -64,7 +79,40 @@ thresh = cv2.adaptiveThreshold(gray,255,1,1,11,2)
 cv2.imshow('image',orig)
 cv2.imshow('gray',gray)
 cv2.imshow('thresh',thresh)
+
+im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+biggest = None
+max_area = 0
+bigest=0
+
+min_size = thresh.size/4
+for i in contours:
+        area = cv2.contourArea(i)
+        if area > 100:
+                peri = cv2.arcLength(i,True)
+                approx = cv2.approxPolyDP(i,0.02*peri,True)
+                #Approximates a polygonal curve(s) with the specified precision
+
+                if area > max_area and len(approx)==4:
+                        biggest = approx
+                        max_area = area
+                        print ("approx: ")
+                        #print (index)
+                        #bigest=i
+
+#cv2.drawContours(orig,contours[bigest],0,255,-1)
+print (biggest)
+
+_4_corners=rectify(biggest)
+z=3
+for i in _4_corners:
+    cv2.circle(orig,(i[0],i[1]), z, (255,0,0), -1)
+    z=z+2
+
+
+cv2.imshow('contour',orig)
+
 if cv2.waitKey(0) & 0xff == 27:
     cv2.destroyAllWindows()
 
-cv2.imwrite('real_board.png',thresh)
+cv2.imwrite('real_board.png',orig)
