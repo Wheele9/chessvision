@@ -162,5 +162,5 @@ cv2.imshow('after_intersect_search',lineimg)
 if cv2.waitKey(0) & 0xff == 27:
     cv2.destroyAllWindows()
 
-cv2.imwrite('chess.png',lineimg)
+cv2.imwrite('real_board.png',lineimg)
 
