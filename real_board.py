@@ -74,10 +74,6 @@ gray = cv2.GaussianBlur(gray,(5,5),0)
 thresh = cv2.adaptiveThreshold(gray,255,1,1,11,2)
 
 
-
-
-cv2.imshow('image',orig)
-cv2.imshow('gray',gray)
 cv2.imshow('thresh',thresh)
 
 im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -96,21 +92,22 @@ for i in contours:
                 if area > max_area and len(approx)==4:
                         biggest = approx
                         max_area = area
-                        print ("approx: ")
-                        #print (index)
-                        #bigest=i
+                        m_c = i # main countur
 
-#cv2.drawContours(orig,contours[bigest],0,255,-1)
-print (biggest)
 
 _4_corners=rectify(biggest)
-z=3
-for i in _4_corners:
-    cv2.circle(orig,(i[0],i[1]), z, (255,0,0), -1)
-    z=z+2
 
 
-cv2.imshow('contour',orig)
+###drawing the board border
+cv2.drawContours(orig, [m_c], 0, (0,0,255), 4)
+board=cv2.fillPoly(orig, pts =[m_c], color=(255,255,255))
+cv2.imshow('board',orig)
+
+
+###crating binary iamge from border
+mask = np.ones(orig.shape,np.uint8)
+board=cv2.fillPoly(mask, pts =[m_c], color=(255,255,255))
+cv2.imshow('mask',mask)
 
 if cv2.waitKey(0) & 0xff == 27:
     cv2.destroyAllWindows()
