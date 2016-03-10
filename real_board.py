@@ -75,8 +75,16 @@ print (gray.shape)
 gray = cv2.GaussianBlur(gray,(5,5),0)
 threshold = cv2.adaptiveThreshold(gray,255,1,1,11,2)
 
-#cv2.imshow('threshold',threshold)
+dilated = cv2.dilate(threshold, np.ones((3, 3)))
 
+kernel = np.ones((2,2),np.uint8)
+erosion = cv2.erode(threshold,kernel,iterations = 1)
+
+#cv2.imshow('threshold',threshold)
+#cv2.imshow('dilated',dilated)
+#cv2.imshow('erosion',erosion)
+###todo morphology
+#http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_morphological_ops/py_morphological_ops.html
 im2, contours, hierarchy = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 biggest = None
 max_area = 0
@@ -106,20 +114,12 @@ _4_corners=rectify(biggest)
 
 ###crating binary image from border
 mask = np.ones(orig.shape,np.uint8)
+#mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
 cv2.fillPoly(mask, pts =[m_c], color=(255,255,255))
-mask_inv = cv2.bitwise_not(mask)
-#cv2.imshow('mask',mask)
 
 
-###masked out original picture:
-masked_orig=cv2.bitwise_or(img,mask_inv)
-cv2.imshow('masked_board',masked_orig)
-
-
-###masked out threshold picture:
-###3channel to 1 channel
-mask_inv=cv2.cvtColor(mask_inv,cv2.COLOR_BGR2GRAY)
-masked_th=cv2.bitwise_or(threshold,mask_inv)
+threshold = cv2.adaptiveThreshold(gray,255,1,1,11,2)
+masked_th=cv2.bitwise_and(threshold,mask)
 cv2.imshow('masked_treshold',masked_th)
 
 
