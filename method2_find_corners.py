@@ -1,27 +1,18 @@
 import cv2
 import numpy as np
-import itertools
-from matplotlib import pyplot as plt
-from operator import itemgetter
 
-filename = 'green_board_5.jpg'
+filename = 'reka_1.jpg'
 img=cv2.imread(filename)
+
+x=3
+
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
-    # Find the chess board corners
-ret, corners = cv2.findChessboardCorners(gray, (7,7),None)
-
+ret, corners = cv2.findChessboardCorners(gray, (x,x),None)
+print (corners)
 if ret == True:
-    img = cv2.drawChessboardCorners(img, (7,7), corners,ret)
-
-
-    #cv2.imshow('img',img)
-
-    print (1)
-    print (corners)
-    ## corners are already in order :) 
+	print (222)
+img = cv2.drawChessboardCorners(img, (x,x), corners,ret)
+cv2.imshow('chessboardcorners',img)
 
 if cv2.waitKey(0) & 0xff == 27:
-    cv2.destroyAllWindows()
-
-cv2.imwrite('real_chessboard.png',img)
+	cv2.destroyAllWindows()

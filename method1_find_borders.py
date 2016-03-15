@@ -100,73 +100,16 @@ mask = np.ones(orig.shape,np.uint8)
 mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
 cv2.fillPoly(mask, pts =[m_c], color=(255,255,255))
 
+cv2.imshow("mask", mask)
 
 threshold = cv2.adaptiveThreshold(gray,255,1,1,11,2)
-masked_th=cv2.bitwise_and(threshold,mask)
+masked_th=cv2.bitwise_and(threshold, mask)
 #cv2.imshow('masked_treshold',masked_th)
 
 #http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_morphological_ops/py_morphological_ops.html
 kernel = np.ones((3,3),np.uint8)
 after_morph = cv2.morphologyEx(masked_th, cv2.MORPH_OPEN, kernel, iterations = 1)
 cv2.imshow('morphology',after_morph)
-
-
-
-
-
-
-
-
-cv2.namedWindow('image')
-cv2.createTrackbar('votes','image',0,255,nothing)
-cv2.createTrackbar('minlen','image',0,255,nothing)
-cv2.createTrackbar('gap','image',0,255,nothing)
-cv2.createTrackbar('asize','image',0,20,nothing)
-
-
-while (1):
-
-    votes = cv2.getTrackbarPos('votes','image')
-    minlen = cv2.getTrackbarPos('minlen','image')
-    gap = cv2.getTrackbarPos('gap','image')
-    asize = cv2.getTrackbarPos('asize','image')
-
-    edges = cv2.Canny(after_morph,100,200, L2gradient =True , apertureSize = (asize*2)+3)
-    lines = cv2.HoughLines(edges,1,np.pi/180,votes,minlen,gap)
-
-    img2 = cv2.cvtColor(after_morph,cv2.COLOR_GRAY2BGR)
-
-
-
-
-    #print (lines)
-    for x in range(len(lines)):
-        for rho, theta in lines[x]:
-            a = np.cos(theta)
-            b = np.sin(theta)
-            x0 = a*rho
-            y0 = b*rho
-            x1 = int(x0 + 1000*(-b))
-            y1 = int(y0 + 1000*(a))
-            x2 = int(x0 - 1000*(-b))
-            y2 = int(y0 - 1000*(a))
-
-            cv2.line(img2,(x1,y1),(x2,y2),(0,0,255),2)
-
-    cv2.imshow('image',img2)
-
-    k = cv2.waitKey(1) & 0xFF
-    if k == 27:
-        break
-
-
-
-
-
-
-
-
-
 
 
 
