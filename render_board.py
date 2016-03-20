@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import itertools
-from matplotlib import pyplot as plt
+
 from operator import itemgetter
 
 def centre_of_4_points(p1,p2,p3,p4):

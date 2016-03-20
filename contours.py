@@ -1,11 +1,4 @@
 import cv2
-import numpy as np
-import itertools
-from matplotlib import pyplot as plt
-from operator import itemgetter
-
-
-import numpy as np
 
  
 im = cv2.imread('test.jpg')

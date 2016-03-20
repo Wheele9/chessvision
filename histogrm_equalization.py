@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
-import itertools
-from matplotlib import pyplot as plt
-from operator import itemgetter
+
 
 ###global histogram equalization to increase contrast
 img = cv2.imread('lc_filed.jpg',0)
